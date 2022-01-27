@@ -39,11 +39,11 @@ Additionally, you can provide the following parameters:
 
 - bonferroni_alpha:P-value threshold for multiple testing correction
 
-- normaltest: Booleano (optional) . If True, Run a normality test for residuals "scipy.stats.normaltest". If residuals are not normal, the edge will not be considered in the analysis. 
+- normaltest: Boolean. If True, Run a normality test for residuals "scipy.stats.normaltest". If residuals are not normal, the edge will not be considered in the analysis. 
 
 - normaltest_alpha: p-value threshold for normaltest (if True).
 
-- R2_threshold: R-squared (R2) threshold from 0 to 1 (optional).
+- R2_threshold: R-squared (R2) threshold from 0 to 1 (optional).  If the fit is weaker, the edge will not be considered in the analysis. 
 
 
 
@@ -66,6 +66,9 @@ import pandas as pd
 Define the confounding variables or the design matrix 
 
 ```python
+# The condition column
+conCol='condition'
+
 # categorical variable columns in meta dataframe.
 # these columns will be transformed to variables for regression 
 CatCov=['race','gender']  
@@ -81,12 +84,11 @@ Run DysRegNet
 data=dysregnet.run(expression_data=expr,
                    meta=meta, 
                    GRN=grn,
-                   conCol='condition'
+                   conCol=conCol
                    CatCov=CatCov,
                    ConCov=ConCov,
                    normaltest=True,
-                   R2_threshold=.2,
-                   conCol='sample')
+                   R2_threshold=.2)
 
 # results table
 data.get_results()
