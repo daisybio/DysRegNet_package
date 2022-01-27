@@ -23,7 +23,7 @@ The inputs of the  package are the following Pandas DataFrame object:
 - meta -  Metadata with the first column containing patients/samples ids and other columns for covariates.
 
 
-Note that: the patients' or samples ids must be the same in the "expression_data" and  "meta". Additionally, gene names or ids must match the ones in the "GRN" DataFrame. GRN network should be provided a prior, we recommend using the software like  arboreto ([arboreto](https://github.com/aertslab/arboreto), and feed use its output to DysRegNet.
+Note that: the patients' or samples ids must be the same in the "expression_data" and  "meta". Additionally, gene names or ids must match the ones in the "GRN" DataFrame. GRN network should be provided a prior, we recommend using the software like arboreto ([arboreto](https://github.com/aertslab/arboreto), and feed its output directly to DysRegNet.
 
 Additionally, you can provide the following parameters:
 
