@@ -29,30 +29,21 @@ Additionally, you can provide the following parameters:
 
 
             
-- conCol: str, default=='condition'
-        Column name for the condition in the metadata. Should be provided in case of desing=="two".
+- conCol: Column name for the condition in the metadata. Should be provided in case of desing=="two".
 
+- CatCov: List of categorical variable names. They should match the name of their columns in the meta Dataframe.
 
-- CatCov: List of strings.
-        List of categorical variable names. They should match the name of their columns in the meta Dataframe.
+- ConCov: List of continuous covariates. They should match the name of their columns in the meta Dataframe.
 
-- ConCov: List of strings.
-        List of continuous covariates. They should match the name of their columns in the meta Dataframe.
+- zscoring: Boolean, default: True. zscoring of expression data (if needed).
 
+- bonferroni_alpha:P-value threshold for multiple testing correction
 
-- zscoring: boolean, default: True 
-     zscoring of expression data (if needed).
+- normaltest: Booleano (optional) . If True, Run a normality test for residuals "scipy.stats.normaltest". If residuals are not normal, the edge will not be considered in the analysis. 
 
-- bonferroni_alpha: Float
-        P-value threshold for multiple testing correction
+- normaltest_alpha: p-value threshold for normaltest (if True).
 
-- normaltest: Bool
-        If True. Run a normality test for residuals "scipy.stats.normaltest". If residuals are not normal, the edge will not be considered in the analysis. 
-
-- normaltest_alpha: Float
-     normaltest p value threshold.
-
-- R2_threshold: float from 0 to 1 (optional)
+- R2_threshold: R-squared (R2) threshold from 0 to 1 (optional).
 
 
 

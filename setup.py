@@ -17,7 +17,7 @@ setup(name='dysregnet',
       long_description_content_type="text/markdown",
       url='',
       author='Zakaria Louadi, olga lazareva ',
-      author_email='zakaria.louadi@tum.de, olga.lazareva@tum.de'
+      author_email='zakaria.louadi@tum.de, olga.lazareva@tum.de',
       license='GPLv3',
       classifiers=[
         "Programming Language :: Python :: 3",
@@ -36,7 +36,8 @@ setup(name='dysregnet',
         'plotly>=4.14.3',
         'scipy>=1.6.2',
         'statsmodels>=0.12.2',
-        'matplotlib>=3.4.1',
+        'tqdm',
+         'sklearn', 
     ],
 
 )
