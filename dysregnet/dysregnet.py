@@ -1,7 +1,5 @@
 
 import pandas as pd
-import re
-
 
 from . import functions 
 
@@ -48,7 +46,6 @@ class run(object):
                                 Specify categorical variable columns in the parameter CatCov.
                                 Specify continuous variable columns in the parameter ConCov.
 
-
                     conCol: str, default=='condition'
                             Column name for the condition in the meta data. Should be provided in case of desing=="two".
 
@@ -67,14 +64,14 @@ class run(object):
                             P value threshold for multiple testing correction
 
                     normaltest: Bool
-                            If True. Run a normality test for residuals "scipy.stats.normaltest".
+                            If True. Run a normality test for residuals "scipy.stats.normaltest". If residuals are not normal, the edge will not be considered in the analysis. 
 
                     normaltest_alpha: Float
                          normaltest p value threshold.
 
                     R2_threshold: float from 0 to 1 (optional)
 
-                        Coefficient of determination threshold for every edge in GRN. If the R2 is less that threshold, the ede will not be considered in the analysis. 
+                        Coefficient of determination threshold for every edge in GRN. If the R2 is less that threshold, the edge will not be considered in the analysis. 
 
                     direction_condition: Bool
                          If True: only include dysregulation that are relevalant for the interactions: down regulation of an activation or up regulation of a supressions. Please check the paper for more details.
@@ -138,10 +135,7 @@ class run(object):
                     self.GRN=self.GRN[ self.GRN.iloc[:,1].isin(GRN_genes) ].drop_duplicates()
 
 
-
-
                     self.cov_df,self.expr, self.control, self.case = functions.process_data(self)
-
 
 
                     self.results=functions.dyregnet_model(self)
