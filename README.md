@@ -20,7 +20,7 @@ The inputs of the  package are the following Pandas DataFrame object:
 
 - expression_data  - Gene expression matrix with the format: patients as rows (first column - patients/samples ids), and genes as columns.
 - GRN - Gene Regulatory Network (GRN) with two columns in the following order ['TF', 'target']
-- meta -  Metadata with the first column containing patients/samples ids and other columns for covariates.
+- meta -  Metadata with the first column containing patients/samples ids and other columns for the condition and the covariates.
 
 
 Note that: the patients' or samples ids must be the same in the "expression_data" and  "meta". Additionally, gene names or ids must match the ones in the "GRN" DataFrame. GRN network should be provided a prior, we recommend using softwares like [arboreto](https://github.com/aertslab/arboreto), since you can use its output directly to DysRegNet.
@@ -29,7 +29,7 @@ Additionally, you can provide the following parameters:
 
 
             
-- conCol: Column name for the condition in the metadata. Should be provided in case of desing=="two".
+- conCol: Column name for the condition in the meta DataFrame.
 
 - CatCov: List of categorical variable names. They should match the name of their columns in the meta Dataframe.
 
