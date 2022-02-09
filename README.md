@@ -112,9 +112,9 @@ data.get_results_binary()
 ```
 ## The output
 
-The package output a DataFrame that represents patient specific dysregulated edges. Columns are edges and rows are patient ids.
+The package output a DataFrame that represents patient specific dysregulated edges. Columns are edges and rows patient ids. 
 
-a value of 0 means that the edge is not significantly dysregulated (different from control samples), otherwise the z-score is reported. For the get_results_binary() method, the dysregulations are binarized instead of z-scores. 
+In the result table, a value of 0 means that the edge is not significantly dysregulated (different from control samples). Otherwise the z-score is reported. For the get_results_binary() method, the dysregulations are binarized instead of z-scores. 
 
 
 ## Example
