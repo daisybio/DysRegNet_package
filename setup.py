@@ -33,7 +33,6 @@ setup(name='dysregnet',
       install_requires=[
         'pandas',
         'numpy>= 1.19',
-        'plotly>=4.14',
         'scipy>=1.6.2',
         'statsmodels>=0.12',
         'tqdm',
