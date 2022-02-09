@@ -56,94 +56,104 @@ def dyregnet_model(data):
         # correct for multiple testing 
         
         # prepare data
-
-        control=pd.merge(data.cov_df.loc[data.control],data.expr, left_index=True, right_index=True).drop_duplicates()
-        case=pd.merge(data.cov_df.loc[data.case],data.expr, left_index=True, right_index=True).drop_duplicates()
         
+        if data.cov_df is not None:
+            control=pd.merge(data.cov_df.loc[data.control],data.expr, left_index=True, right_index=True).drop_duplicates()
+            case=pd.merge(data.cov_df.loc[data.case],data.expr, left_index=True, right_index=True).drop_duplicates()
+            covariate_name= list(data.cov_df.columns)
+        
+        else:
+            control=data.expr.loc[data.control]
+            case=data.expr.loc[data.case]
+            covariate_name=[]
+            
         edges={}
         edges['patient id']=list(case.index)
         for tup in tqdm(data.GRN.itertuples()):
                     # pvalues for the same edge for all patients
 
                     edge = (tup[1],tup[2])
-                    x_train = control[  [edge[0]] + list(data.cov_df.columns) ].values
-                    y_train = control[edge[1]].values
-
-                    # fit the model
-                    reg = LinearRegression().fit(x_train, y_train)
-
-                    #get residuals
-                    resid_control = y_train - reg.predict(x_train)
-
-                    #pv = stats.normaltest(resid_control)[1]
-                    #if pv> 0.01/100000:
-
-                    resid_control = abs(resid_control)
-
-                    # test data
-                    x_test = case[  [edge[0]]+ list(data.cov_df.columns)    ]
-                    y_test = case[edge[1]].values
-
-
-
-                    # define residue for case
-                    resid_case =  reg.predict(x_test) - y_test
-
-
-
-                    # condition of direction
-                    cond=True
-                    direction= np.sign(reg.coef_[0]) 
-
-                    if data.direction_condition: 
-                        cond=( direction * resid_case )>0
+                    
+                    # skip self loops
+                    if edge[0]!=edge[1]:
                         
+                        # prepare control for fitting model
+                        x_train = control[  [edge[0]] + covariate_name ].values
+                        y_train = control[edge[1]].values
 
-                    # calculate zscore
-                    zscore=(abs(resid_case)-resid_control.mean())/resid_control.std()
+                        # fit the model
+                        reg = LinearRegression().fit(x_train, y_train)
+
+                        #get residuals of control
+                        resid_control = y_train - reg.predict(x_train)
+                        resid_control = abs(resid_control)
+
+                        
+                        # test data (case or condition)
+                        x_test = case[  [edge[0]]+ covariate_name    ].values
+                        y_test = case[edge[1]].values
 
 
-                    # Quality check of the fitness (optionally and must be provided by user)
+
+                        # define residue for cases
+                        resid_case =  reg.predict(x_test) - y_test
 
 
-                    if (data.R2_threshold is not None) and  ( data.R2_threshold > reg.score(x_train, y_train) ):
-                        # model fit is not that good on training
-                        # shrink the zscores
-                        edges[edge]= [0] * len(zscore)
-                        continue
 
-                    #normality test for residuals
-                    if  data.normaltest:
-                        pv = stats.normaltest(resid_control)[1]
-                        if pv> data.normaltest_alpha:
-                            # shrink the zscores to 0s
-                            edges[edge]= [0] * len(zscore)
+                        # condition of direction
+                        cond=True
+                        direction= np.sign(reg.coef_[0]) 
+
+                        if data.direction_condition: 
+                            cond=( direction * resid_case )>0
+
+                        
+                        # calculate zscore
+                        zscore=(abs(resid_case)-resid_control.mean())/resid_control.std()
+      
+
+
+                        # Quality check of the fitness (optionally and must be provided by user)
+
+
+                        if (data.R2_threshold is not None) and  ( data.R2_threshold > reg.score(x_train, y_train) ):
+                            # model fit is not that good on training
+                            # shrink the zscores
+                            edges[edge]= [0.0] * len(zscore)
                             continue
 
-
-                    # zscores to p values
-                    pvalues=stats.norm.sf(zscore)
-
-                    # correct for multi. testing
-                    pvalues=sm.stats.multipletests(pvalues,method='bonferroni',alpha=data.bonferroni_alpha)[1]
-
-                    pvalues= pvalues < data.bonferroni_alpha
-
-
-                    # add direction to z scores
-                    zscore= zscore * direction
+                        #normality test for residuals
+                        if  data.normaltest:
+                            pv = stats.normaltest(resid_control)[1]
+                            if pv> data.normaltest_alpha:
+                                # shrink the zscores to 0s
+                                edges[edge]= [0.0] * len(zscore)
+                                continue
 
 
-                    # direction condition and a p_value 
-                    valid= cond * pvalues
+                        # zscores to p values
+                        pvalues=stats.norm.sf(zscore)
+
+                        # correct for multi. testing
+                        pvalues=sm.stats.multipletests(pvalues,method='bonferroni',alpha=data.bonferroni_alpha)[1]
+
+                        pvalues= pvalues < data.bonferroni_alpha
+
+
+                        # add direction to z scores
+                        zscore= zscore * direction
+
+
+                        # direction condition and a p_value 
+                        valid= cond * pvalues
 
 
 
-                    # shrink the z scores that are not signifcant or not in the condition
-                    zscore[~valid]=0
+                        # shrink the z scores that are not signifcant or not in the condition
+                        zscore[~valid]=0.0
 
 
-                    edges[edge]=zscore
+                        edges[edge]=np.round(zscore, 1)
                     
         data=pd.DataFrame.from_dict(edges)
         

@@ -149,6 +149,16 @@ class run(object):
         
         
         
+        def get_results_binary(self):
+                res_binary=self.results.copy()
+                res_binary=res_binary.set_index('patient id')
+                res_binary = res_binary.where(res_binary==0, other=1)
+                
+                return res_binary
+
+        
+        
+        
 
             
             

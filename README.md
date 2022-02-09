@@ -9,7 +9,7 @@ To install the package from git:
 
 `git clone https://github.com/biomedbigdata/DysRegNet_package.git  && cd DysRegNet_package`
 
-`pip install .`
+`python setup.py install`
 
 
 
@@ -19,11 +19,22 @@ The inputs of the  package are the following Pandas DataFrame object:
 
 
 - expression_data  - Gene expression matrix with the format: patients as rows (first column - patients/samples ids), and genes as columns.
-- GRN - Gene Regulatory Network (GRN) with two columns in the following order ['TF', 'target']
+- GRN - Gene Regulatory Network (GRN) with two columns in the following order ['TF', 'target'].
 - meta -  Metadata with the first column containing patients/samples ids and other columns for the condition and the covariates.
 
 
-Note that: the patients' or samples ids must be the same in the "expression_data" and  "meta". Additionally, gene names or ids must match the ones in the "GRN" DataFrame. GRN network should be provided a prior, we recommend using softwares like [arboreto](https://github.com/aertslab/arboreto), since you can use its output directly to DysRegNet.
+The patients id or samples ids must be the same in the "expression_data" and  "meta". Additionally, gene names or ids must match the ones in the "GRN" DataFrame. 
+
+In the condition column of the meta DataFrame, the control samples should be encoded as 0 and case samples as 1.
+
+GRN network should be provided a prior, You can either use an experimental validated GRN or learn it from control samples, we recommend using software like [arboreto](https://github.com/aertslab/arboreto), since you can use its output directly to DysRegNet.
+
+
+
+
+
+## Parameters 
+
 
 Additionally, you can provide the following parameters:
 
@@ -94,7 +105,24 @@ data=dysregnet.run(expression_data=expr,
 # results table
 data.get_results()
 
+# or a binary result
+
+data.get_results_binary()
+
 ```
+## The output
+
+The package output a DataFrame that represents patient specific dysregulated edges. Columns are edges and rows are patient ids.
+
+a value of 0 means that the edge is not significantly dysregulated (different from control samples), otherwise the z-score is reported. For the get_results_binary() method, the dysregulations are binarized instead of z-scores. 
+
+
+## Example
+
+A simple example for running DysRegNet:
+([Notebook](https://github.com/biomedbigdata/DysRegNet_package/blob/main/test.ipynb)/[Google Colab](https://colab.research.google.com/github/biomedbigdata/DysRegNet_package/blob/main/test.ipynb)).
+
+
 
 
 ## Cite
