@@ -37,7 +37,7 @@ def process_data(data):
                 
                 
         # z scoring of expression
-        if data.zscoring: xpr=data.expression_data.apply(zscore) 
+        if data.zscoring: expr=data.expression_data.apply(zscore) 
         else:  expr=data.expression_data
         
         
