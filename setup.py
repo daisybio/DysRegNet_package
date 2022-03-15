@@ -33,8 +33,8 @@ setup(name='dysregnet',
       install_requires=[
         'pandas',
         'numpy>= 1.19',
-        'scipy>=1.6.2',
-        'statsmodels>=0.12',
+        'scipy',
+        'statsmodels',
         'tqdm',
         'sklearn', 
 
