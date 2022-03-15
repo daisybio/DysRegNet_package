@@ -85,8 +85,7 @@ def dyregnet_model(data):
                         reg = LinearRegression().fit(x_train, y_train)
 
                         #get residuals of control
-                        resid_control = y_train - reg.predict(x_train)
-                        resid_control = abs(resid_control)
+                        resid_control =reg.predict(x_train) -  y_train
 
                         
                         # test data (case or condition)
@@ -109,7 +108,7 @@ def dyregnet_model(data):
 
                         
                         # calculate zscore
-                        zscore=(abs(resid_case)-resid_control.mean())/resid_control.std()
+                        zscore=(resid_case-resid_control.mean())/resid_control.std()
       
 
 
@@ -132,7 +131,7 @@ def dyregnet_model(data):
 
 
                         # zscores to p values
-                        pvalues=stats.norm.sf(zscore)
+                        pvalues=stats.norm.sf(abs(zscore))
 
                         # correct for multi. testing
                         pvalues=sm.stats.multipletests(pvalues,method='bonferroni',alpha=data.bonferroni_alpha)[1]
@@ -141,7 +140,7 @@ def dyregnet_model(data):
 
 
                         # add direction to z scores
-                        zscore= zscore * direction
+                        zscore=abs(zscore) * direction
 
 
                         # direction condition and a p_value 
