@@ -102,9 +102,17 @@ def dyregnet_model(data):
                         # condition of direction
                         cond=True
                         direction= np.sign(reg.coef_[0]) 
+                        
+                        
+                        # two sided p_value as default
+                        # if direction_condition is false calculate, two sided p value
+                        sides=2
 
                         if data.direction_condition: 
                             cond=( direction * resid_case )>0
+                            
+                            # if direction_condition is true only calculate one sided p value
+                            sides=1
 
                         
                         # calculate zscore
@@ -131,7 +139,7 @@ def dyregnet_model(data):
 
 
                         # zscores to p values
-                        pvalues=stats.norm.sf(abs(zscore))
+                        pvalues=stats.norm.sf(abs(zscore)) * sides
 
                         # correct for multi. testing
                         pvalues=sm.stats.multipletests(pvalues,method='bonferroni',alpha=data.bonferroni_alpha)[1]
