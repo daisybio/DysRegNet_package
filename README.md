@@ -1,6 +1,8 @@
 # DysRegNet package
 
 
+DysRegNet, is a  method for inferring patient-specific regulatory alterations (dysregulations) from gene expression profiles. DysRegNet uses linear models to account for confounders and residual-derived z-scores to assess significance.
+
 
 ## Installation
 
