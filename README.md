@@ -1,3 +1,5 @@
+[![PyPI version](https://badge.fury.io/py/dysregnet.svg)](https://badge.fury.io/py/dysregnet)
+
 # DysRegNet package
 
 
