@@ -137,9 +137,9 @@ A simple example for running DysRegNet:
 ([Notebook](https://github.com/biomedbigdata/DysRegNet_package/blob/main/test.ipynb)/[Google Colab](https://colab.research.google.com/github/biomedbigdata/DysRegNet_package/blob/main/test.ipynb)).
 
 
-If you want to eun the exact demo. You will need to download the demo dataset and extract the files into test dataset/
+You will need to download the demo dataset and extract the files into test dataset/
 
-Link: https://figshare.com/ndownloader/files/35142652
+Link for the. demo dataset: https://figshare.com/ndownloader/files/35142652
 
 
 
