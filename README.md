@@ -5,9 +5,12 @@ DysRegNet, is a  method for inferring patient-specific regulatory alterations (d
 
 
 ## Installation
+To install the package from PyPI please run:
+
+`pip install dysregnet`
 
 
-To install the package from git:
+or you can install it from git:
 
 `git clone https://github.com/biomedbigdata/DysRegNet_package.git  && cd DysRegNet_package`
 
