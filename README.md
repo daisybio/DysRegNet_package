@@ -112,6 +112,11 @@ data.get_results()
 data.get_results_binary()
 
 ```
+
+The expected run time for the installation and running the demo dataset on a "normal" desktop computer is around 3~5 minutes.
+
+
+
 ## The output
 
 The package output a DataFrame that represents patient-specific dysregulated edges. The columns represent edges and the rows patient ids. 
@@ -127,6 +132,14 @@ A simple example for running DysRegNet:
 ([Notebook](https://github.com/biomedbigdata/DysRegNet_package/blob/main/test.ipynb)/[Google Colab](https://colab.research.google.com/github/biomedbigdata/DysRegNet_package/blob/main/test.ipynb)).
 
 
+If you want to eun the exact demo. You will need to download the demo dataset and extract the files into test dataset/
+
+Link: https://figshare.com/ndownloader/files/35142652
+
 
 
 ## Cite
+
+"DysRegNet: Patient-specific and confounder-aware dysregulated network inference"
+Olga Lazareva*, Zakaria Louadi*, Johannes Kersting, Jan Baumbach, David B. Blumenthal, Markus List. bioRxiv 2022.04.29.490015; doi: https://doi.org/10.1101/2022.04.29.490015  
+* equal first-authors
