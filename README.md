@@ -139,7 +139,7 @@ A simple example for running DysRegNet:
 
 You will need to download the demo dataset and extract the files into test dataset/
 
-Link for the. demo dataset: https://figshare.com/ndownloader/files/35142652
+Link for the demo dataset: https://figshare.com/ndownloader/files/35142652
 
 
 
