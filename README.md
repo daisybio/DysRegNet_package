@@ -63,7 +63,7 @@ Additionally, you can provide the following parameters:
 
 - R2_threshold: R-squared (R2) threshold from 0 to 1 (optional).  If the fit is weaker, the edge will not be considered in the analysis. 
 
-- direction_condition: Boolean. If True: only include dysregulation that are relevalant for the interactions (down regulation of an activation or up regulation of a supressions). Please check the paper for more details.
+- direction_condition: Boolean. If True: only include dysregulation that are relevant for the interactions (down regulation of an activation or up regulation of a supressions). Please check the paper for more details.
 
 
 ## Get Started
