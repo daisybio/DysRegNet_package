@@ -138,7 +138,7 @@ class run(object):
                     self.cov_df,self.expr, self.control, self.case = functions.process_data(self)
 
 
-                    self.results=functions.dyregnet_model(self)
+                    self.results, self.model_stats = functions.dyregnet_model(self)
                 
 
                 
@@ -151,10 +151,13 @@ class run(object):
         
         def get_results_binary(self):
                 res_binary=self.results.copy()
-                res_binary=res_binary.set_index('patient id')
                 res_binary = res_binary.where(res_binary==0, other=1)
                 
                 return res_binary
+
+    
+        def get_model_stats(self):
+            return self.model_stats
 
         
         
