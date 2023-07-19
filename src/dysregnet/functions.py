@@ -11,7 +11,7 @@ import statsmodels.api as sm
 def process_data(data):
        
 
-        # process covariates and desing martic
+        # process covariates and design matrix
         
         all_covariates= data.CatCov + data.ConCov
 
@@ -32,7 +32,7 @@ def process_data(data):
 
                 # process categorial covariate
                 # drop_first is important to avoid multicollinear
-                cov_df=pd.get_dummies(cov_df, columns=data.CatCov, drop_first=True)
+                cov_df=pd.get_dummies(cov_df, columns=data.CatCov, drop_first=True, dtype=int)
                 
                 
                 
@@ -67,63 +67,67 @@ def dyregnet_model(data):
             case=data.expr.loc[data.case]
             covariate_name=[]
             
-        edges={}
-        edges['patient id']=list(case.index)
+        edges = {}
+        edges['patient id']=list(case.index.values)
+        model_stats = {}
         for tup in tqdm(data.GRN.itertuples()):
                     # pvalues for the same edge for all patients
 
                     edge = (tup[1],tup[2])
                     
                     # skip self loops
-                    if edge[0]!=edge[1]:
-                        
+                    if edge[0] != edge[1]:
+
                         # prepare control for fitting model
-                        x_train = control[  [edge[0]] + covariate_name ].values
+                        x_train = control[  [edge[0]] + covariate_name ]
+                        x_train = sm.add_constant(x_train) # add bias
                         y_train = control[edge[1]].values
 
                         # fit the model
-                        reg = LinearRegression().fit(x_train, y_train)
-
-                        #get residuals of control
-                        resid_control =reg.predict(x_train) -  y_train
-
+                        model = sm.OLS(y_train, x_train)
+                        results = model.fit()
                         
+                        model_stats[edge] = [results.rsquared] + list(results.params.values) + list(results.pvalues.values)
+                        
+
+                        # get residuals of control
+                        resid_control = results.predict(x_train) -  y_train
+
                         # test data (case or condition)
-                        x_test = case[  [edge[0]]+ covariate_name    ].values
+                        x_test = case[  [edge[0]]+ covariate_name    ]
+                        x_test = sm.add_constant(x_test) # add bias
                         y_test = case[edge[1]].values
 
 
-
                         # define residue for cases
-                        resid_case =  reg.predict(x_test) - y_test
+                        resid_case =  results.predict(x_test) - y_test
 
-
-
+                        
                         # condition of direction
-                        cond=True
-                        direction= np.sign(reg.coef_[0]) 
+                        cond = True
+                        direction = np.sign(results.params[1])
                         
                         
                         # two sided p_value as default
                         # if direction_condition is false calculate, two sided p value
-                        sides=2
+                        sides = 2
 
                         if data.direction_condition: 
-                            cond=( direction * resid_case )>0
+                            cond = ( direction * resid_case ) > 0
                             
                             # if direction_condition is true only calculate one sided p value
-                            sides=1
+                            sides = 1
 
                         
                         # calculate zscore
-                        zscore=(resid_case-resid_control.mean())/resid_control.std()
+                        zscore= (resid_case - resid_control.mean()) / resid_control.std()
       
 
 
                         # Quality check of the fitness (optionally and must be provided by user)
 
 
-                        if (data.R2_threshold is not None) and  ( data.R2_threshold > reg.score(x_train, y_train) ):
+                        if (data.R2_threshold is not None) and  ( data.R2_threshold > results.rsquared ):
                             # model fit is not that good on training
                             # shrink the zscores
                             edges[edge]= [0.0] * len(zscore)
@@ -160,8 +164,15 @@ def dyregnet_model(data):
                         zscore[~valid]=0.0
 
 
-                        edges[edge]=np.round(zscore, 1)
+                        edges[edge] = np.round(zscore, 1)
+
+                        
                     
-        data=pd.DataFrame.from_dict(edges)
+        results = pd.DataFrame.from_dict(edges)
+        results = results.set_index('patient id')
         
-        return data
+        model_stats_cols = ["R2"] + ["coef_" + coef for coef in ["intercept", "TF"] + covariate_name] + ["pval_" + coef for coef in ["intercept", "TF"] + covariate_name]
+        model_stats = pd.DataFrame([model_stats[edge] for edge in results.columns], index=results.columns, columns=model_stats_cols)
+
+        
+        return results, model_stats
