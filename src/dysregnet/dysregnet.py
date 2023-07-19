@@ -57,7 +57,7 @@ class run(object):
                             List of continuous covariates. They should match the name of their columns in meta Dataframe.
 
 
-                    zscoring: boolean, default: True 
+                    zscoring: boolean, default: False 
                          zscoring of expression data (if needed).
 
                     bonferroni_alpha: Float

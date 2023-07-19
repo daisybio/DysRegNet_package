@@ -116,6 +116,9 @@ data.get_results()
 
 data.get_results_binary()
 
+# get R2 values, coefficients, and coefficient p-values for all models/edges
+data.get_model_stats()
+
 ```
 
 The expected run time for the installation and running the demo dataset on a "normal" desktop computer is around 3~5 minutes.

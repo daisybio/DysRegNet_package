@@ -11,7 +11,7 @@ README = (HERE / "README.md").read_text()
 
 
 setup(name='dysregnet',
-      version='0.0.3',
+      version='0.0.4',
       description='DysRegNet',
       long_description=README,
       long_description_content_type="text/markdown",
@@ -27,7 +27,8 @@ setup(name='dysregnet',
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Topic :: Scientific/Engineering :: Bio-Informatics",
       ],
-      packages=find_packages(),
+      package_dir = {'': 'src'},
+      packages=['dysregnet'],
       include_package_data=True,
       python_requires='>=3.7',
       install_requires=[

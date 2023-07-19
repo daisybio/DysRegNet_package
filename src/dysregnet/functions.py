@@ -86,6 +86,9 @@ def dyregnet_model(data):
                         # fit the model
                         model = sm.OLS(y_train, x_train)
                         results = model.fit()
+                        
+                        model_stats[edge] = [results.rsquared] + list(results.params.values) + list(results.pvalues.values)
+                        
 
                         # get residuals of control
                         resid_control = results.predict(x_train) -  y_train
@@ -162,7 +165,6 @@ def dyregnet_model(data):
 
 
                         edges[edge] = np.round(zscore, 1)
-                        model_stats[edge] = [results.rsquared] + list(results.params.values) + list(results.pvalues.values)
 
                         
                     
