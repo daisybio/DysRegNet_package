@@ -105,7 +105,7 @@ def dyregnet_model(data):
                         
                         # condition of direction
                         cond = True
-                        direction = np.sign(results.params[1])
+                        direction = np.sign(results.params.iloc[1])
                         
                         
                         # two sided p_value as default
