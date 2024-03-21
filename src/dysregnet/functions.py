@@ -80,7 +80,7 @@ def dyregnet_model(data):
 
                         # prepare control for fitting model
                         x_train = control[  [edge[0]] + covariate_name ]
-                        x_train = sm.add_constant(x_train) # add bias
+                        x_train = sm.add_constant(x_train, has_constant='add') # add bias
                         y_train = control[edge[1]].values
 
                         # fit the model
@@ -89,13 +89,12 @@ def dyregnet_model(data):
                         
                         model_stats[edge] = [results.rsquared] + list(results.params.values) + list(results.pvalues.values)
                         
-
                         # get residuals of control
                         resid_control = results.predict(x_train) -  y_train
 
                         # test data (case or condition)
                         x_test = case[  [edge[0]]+ covariate_name    ]
-                        x_test = sm.add_constant(x_test) # add bias
+                        x_test = sm.add_constant(x_test, has_constant='add') # add bias
                         y_test = case[edge[1]].values
 
 
