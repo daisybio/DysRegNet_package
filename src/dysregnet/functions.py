@@ -90,7 +90,7 @@ def dyregnet_model(data):
                         model_stats[edge] = [results.rsquared] + list(results.params.values) + list(results.pvalues.values)
                         
                         # get residuals of control
-                        resid_control = results.predict(x_train) -  y_train
+                        resid_control = y_train - results.predict(x_train) 
 
                         # test data (case or condition)
                         x_test = case[  [edge[0]]+ covariate_name    ]
@@ -99,7 +99,7 @@ def dyregnet_model(data):
 
 
                         # define residue for cases
-                        resid_case =  results.predict(x_test) - y_test
+                        resid_case =  y_test - results.predict(x_test)
 
                         
                         # condition of direction
@@ -112,7 +112,7 @@ def dyregnet_model(data):
                         sides = 2
 
                         if data.direction_condition: 
-                            cond = ( direction * resid_case ) > 0
+                            cond = ( direction * resid_case ) < 0
                             
                             # if direction_condition is true only calculate one sided p value
                             sides = 1
@@ -149,9 +149,6 @@ def dyregnet_model(data):
 
                         pvalues= pvalues < data.bonferroni_alpha
 
-
-                        # add direction to z scores
-                        zscore=abs(zscore) * direction
 
 
                         # direction condition and a p_value 
