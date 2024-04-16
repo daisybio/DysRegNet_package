@@ -1,6 +1,6 @@
 import pandas as pd
 from scipy.stats import zscore
-from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import StandardScaler
 from tqdm import tqdm
 import numpy as np
 from scipy import stats
@@ -13,12 +13,12 @@ def process_data(data):
 
         # process covariates and design matrix
         
-        all_covariates= data.CatCov + data.ConCov
+        all_covariates = data.CatCov + data.ConCov
 
         if not all_covariates or len(data.meta)==1:
 
                 # No covariate provided
-                print('You did not input any covariates in CatCov or ConCov parameters, proceed without them.')
+                print('You did not input any covariates in CatCov or ConCov parameters, proceeding without them.')
                 cov_df=None
 
         else:
@@ -28,22 +28,46 @@ def process_data(data):
                 if not set(all_covariates).issubset(data.meta.columns):
                     raise ValueError("Invalid elements in CatCov or ConCov. Please check that all covariates names (continuous or categorials) are in the meta DataFrame. ")
 
-                cov_df=data.meta[all_covariates]
+                cov_df = data.meta[all_covariates]
 
                 # process categorial covariate
                 # drop_first is important to avoid multicollinear
-                cov_df=pd.get_dummies(cov_df, columns=data.CatCov, drop_first=True, dtype=int)
+                cov_df = pd.get_dummies(cov_df, columns=data.CatCov, drop_first=True, dtype=int)
                 
                 
                 
-        # z scoring of expression
-        if data.zscoring: expr=data.expression_data.apply(zscore) 
-        else:  expr=data.expression_data
+        # z scoring
+        if data.zscoring:
+
+            # expression data
+            # fit a scaler base on the control samples
+            scaler = StandardScaler()
+            scaler.fit(data.expression_data[data.meta[data.conCol]==0])
+
+            # scale the expression data
+            expr = pd.DataFrame(
+                scaler.transform(data.expression_data),
+                columns=data.expression_data.columns, 
+                index=data.expression_data.index
+            )
+            
+            # continuous confounders
+            if cov_df is not None and len(data.ConCov)>0:
+
+                # fit a scaler base on the control samples
+                scaler = StandardScaler()
+                scaler.fit(data.meta.loc[data.meta[data.conCol]==0,data.ConCov])
+
+                # scale the continuous confounders data
+                cov_df[data.ConCov] = scaler.transform(data.meta[data.ConCov])
+            
+        else:  
+            expr = data.expression_data
         
         
         #get control and case sample 
-        control= data.meta[ data.meta[data.conCol]==0 ].index.values.tolist()
-        case=data.meta[ data.meta[data.conCol]==1 ].index.values.tolist()
+        control = data.meta[ data.meta[data.conCol]==0 ].index.values.tolist()
+        case = data.meta[ data.meta[data.conCol]==1 ].index.values.tolist()
 
         return cov_df, expr, control, case
     
