@@ -1,6 +1,6 @@
 import pandas as pd
 from scipy.stats import zscore
-from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import StandardScaler
 from tqdm import tqdm
 import numpy as np
 from scipy import stats
@@ -13,12 +13,12 @@ def process_data(data):
 
         # process covariates and design matrix
         
-        all_covariates= data.CatCov + data.ConCov
+        all_covariates = data.CatCov + data.ConCov
 
         if not all_covariates or len(data.meta)==1:
 
                 # No covariate provided
-                print('You did not input any covariates in CatCov or ConCov parameters, proceed without them.')
+                print('You did not input any covariates in CatCov or ConCov parameters, proceeding without them.')
                 cov_df=None
 
         else:
@@ -28,22 +28,46 @@ def process_data(data):
                 if not set(all_covariates).issubset(data.meta.columns):
                     raise ValueError("Invalid elements in CatCov or ConCov. Please check that all covariates names (continuous or categorials) are in the meta DataFrame. ")
 
-                cov_df=data.meta[all_covariates]
+                cov_df = data.meta[all_covariates]
 
                 # process categorial covariate
                 # drop_first is important to avoid multicollinear
-                cov_df=pd.get_dummies(cov_df, columns=data.CatCov, drop_first=True, dtype=int)
+                cov_df = pd.get_dummies(cov_df, columns=data.CatCov, drop_first=True, dtype=int)
                 
                 
                 
-        # z scoring of expression
-        if data.zscoring: expr=data.expression_data.apply(zscore) 
-        else:  expr=data.expression_data
+        # z scoring
+        if data.zscoring:
+
+            # expression data
+            # fit a scaler base on the control samples
+            scaler = StandardScaler()
+            scaler.fit(data.expression_data[data.meta[data.conCol]==0])
+
+            # scale the expression data
+            expr = pd.DataFrame(
+                scaler.transform(data.expression_data),
+                columns=data.expression_data.columns, 
+                index=data.expression_data.index
+            )
+            
+            # continuous confounders
+            if cov_df is not None and len(data.ConCov)>0:
+
+                # fit a scaler base on the control samples
+                scaler = StandardScaler()
+                scaler.fit(data.meta.loc[data.meta[data.conCol]==0,data.ConCov])
+
+                # scale the continuous confounders data
+                cov_df[data.ConCov] = scaler.transform(data.meta[data.ConCov])
+            
+        else:  
+            expr = data.expression_data
         
         
         #get control and case sample 
-        control= data.meta[ data.meta[data.conCol]==0 ].index.values.tolist()
-        case=data.meta[ data.meta[data.conCol]==1 ].index.values.tolist()
+        control = data.meta[ data.meta[data.conCol]==0 ].index.values.tolist()
+        case = data.meta[ data.meta[data.conCol]==1 ].index.values.tolist()
 
         return cov_df, expr, control, case
     
@@ -80,7 +104,7 @@ def dyregnet_model(data):
 
                         # prepare control for fitting model
                         x_train = control[  [edge[0]] + covariate_name ]
-                        x_train = sm.add_constant(x_train) # add bias
+                        x_train = sm.add_constant(x_train, has_constant='add') # add bias
                         y_train = control[edge[1]].values
 
                         # fit the model
@@ -89,18 +113,17 @@ def dyregnet_model(data):
                         
                         model_stats[edge] = [results.rsquared] + list(results.params.values) + list(results.pvalues.values)
                         
-
                         # get residuals of control
-                        resid_control = results.predict(x_train) -  y_train
+                        resid_control = y_train - results.predict(x_train) 
 
                         # test data (case or condition)
                         x_test = case[  [edge[0]]+ covariate_name    ]
-                        x_test = sm.add_constant(x_test) # add bias
+                        x_test = sm.add_constant(x_test, has_constant='add') # add bias
                         y_test = case[edge[1]].values
 
 
                         # define residue for cases
-                        resid_case =  results.predict(x_test) - y_test
+                        resid_case =  y_test - results.predict(x_test)
 
                         
                         # condition of direction
@@ -113,7 +136,7 @@ def dyregnet_model(data):
                         sides = 2
 
                         if data.direction_condition: 
-                            cond = ( direction * resid_case ) > 0
+                            cond = ( direction * resid_case ) < 0
                             
                             # if direction_condition is true only calculate one sided p value
                             sides = 1
@@ -150,9 +173,6 @@ def dyregnet_model(data):
 
                         pvalues= pvalues < data.bonferroni_alpha
 
-
-                        # add direction to z scores
-                        zscore=abs(zscore) * direction
 
 
                         # direction condition and a p_value 

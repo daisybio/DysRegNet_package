@@ -21,62 +21,61 @@ class run(object):
                      CatCov=[],  
                      ConCov=[],
                      zscoring=False,
-                     bonferroni_alpha= 1e-2,
+                     bonferroni_alpha=1e-2,
                      R2_threshold=None,
                      normaltest=False,
                      normaltest_alpha=1e-3,
-                     direction_condition=True):
-
+                     direction_condition=False):
                     """
                     Raw data processing for further analysis
 
-                    expression_data: a pandas DataFrame (rows=samples, columns=genes)
-                             Gene expression matrix with the format: patients as rows (first column - patients/samples ids), and genes as columns.
-                             Patients/samples ids must match the ones in meta DataFrame.
-                             Gene names or ids must match the ones in GRN DataFrame
+                    expression_data: pandas DataFrame (rows=samples, columns=genes)
+                        Gene expression matrix in the format: patients as rows (first column - patients/samples ids), and genes as columns.
+                        Patients/sample IDs must match the ones in the meta DataFrame.
+                        Gene names or IDs must match the ones in the GRN DataFrame.
 
-                    GRN: a pandas DataFrame 
-                          Gene Regulatory Network (GRN) with two columns in the following order ['TF', 'target'].
+                    GRN: pandas DataFrame 
+                        Gene Regulatory Network (GRN) with two columns in the following order ['TF', 'target'].
 
-                    meta: a pandas DataFrame  
-                            Meta data: First column should contain patients/samples ids and other column for covariates/condition. 
-                            Please make sure to have condition column in the meta DataFrame with 0 as control and 1 as the condition.
-                            Specify the condition Column name in "conCol". 
-                            Optionally :
-                                Specify categorical variable columns in the parameter CatCov.
-                                Specify continuous variable columns in the parameter ConCov.
+                    meta: pandas DataFrame  
+                        The first column has to contain patients/sample IDs. 
+                        Further columns can be used to define covariates and the sample condition. 
+                        Please make sure to have a condition column in the meta DataFrame with 0 indicating control and 1 indicating case samples.
+                        Specify the condition Column name in 'conCol'.
+                        Optionally :
+                            Specify categorical variable columns in the parameter CatCov.
+                            Specify continuous variable columns in the parameter ConCov.
 
-                    conCol: str, default=='condition'
-                            Column name for the condition in the meta data. Should be provided in case of desing=="two".
+                    conCol: str, default: 'condition'
+                        Column name for the condition in the metadata.
 
+                    CatCov: List of strings, default: []
+                        List of categorical variable names. They should match the name of their columns in the meta Dataframe.
 
-                    CatCov: List of strings.
-                            List of categorical variable names. They should match the name of their columns in meta Dataframe.
+                    ConCov: List of strings, default: []
+                        List of continuous covariates. They should match the name of their columns in the meta Dataframe.
 
-                    ConCov: List of strings.
-                            List of continuous covariates. They should match the name of their columns in meta Dataframe.
+                    zscoring: bool, default: False 
+                        If True, DysRegNet will scale the expression of each gene and all continuous confounders based on their mean and standard deviation in the control samples.
+                        This can make the obtained model coefficients more interpretable.
 
+                    bonferroni_alpha: float, default: 0.01
+                        P value threshold for multiple testing correction.
 
-                    zscoring: boolean, default: False 
-                         zscoring of expression data (if needed).
+                    normaltest: bool, default: False
+                        If True, DysRegNet runs a normality test for the control residuals with "scipy.stats.normaltest". 
+                        If residuals do not follow a normal distribution, the edge will not be considered in the analysis. 
 
-                    bonferroni_alpha: Float
-                            P value threshold for multiple testing correction
+                    normaltest_alpha: float, default: 0.001
+                        P-value threshold for the normal test.
 
-                    normaltest: Bool
-                            If True. Run a normality test for residuals "scipy.stats.normaltest". If residuals are not normal, the edge will not be considered in the analysis. 
+                    R2_threshold: float, default: None
+                        R-squared (R2) threshold from 0 to 1.  If the fit is weaker, the edge will not be considered in the analysis.
 
-                    normaltest_alpha: Float
-                         normaltest p value threshold.
-
-                    R2_threshold: float from 0 to 1 (optional)
-
-                        Coefficient of determination threshold for every edge in GRN. If the R2 is less that threshold, the edge will not be considered in the analysis. 
-
-                    direction_condition: Bool
-                         If True: only include dysregulation that are relevalant for the interactions: down regulation of an activation or up regulation of a supressions. Please check the paper for more details.
-
-                          """
+                    direction_condition: boolean, default: False
+                         If True, DysRegNet will only consider case samples with positive residuals (target gene overexpressed) for models with a negative TF coefficient
+                         as potentially dysregulated. Similarly, for positive TF coefficients, only case samples with negative residuals are considered. Please check the paper for more details.
+                    """
 
 
 
