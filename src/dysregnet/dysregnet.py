@@ -30,7 +30,7 @@ class run(object):
                     Raw data processing for further analysis
 
                     expression_data: pandas DataFrame (rows=samples, columns=genes)
-                        Gene expression matrix with the format: patients as rows (first column - patients/samples ids), and genes as columns.
+                        Gene expression matrix in the format: patients as rows (first column - patients/samples ids), and genes as columns.
                         Patients/sample IDs must match the ones in the meta DataFrame.
                         Gene names or IDs must match the ones in the GRN DataFrame.
 
@@ -70,11 +70,11 @@ class run(object):
                         P-value threshold for the normal test.
 
                     R2_threshold: float, default: None
-                        Coefficient of determination threshold for every edge in the GRN. If the R2 is less than the threshold, the edge will not be considered in the analysis. 
+                        R-squared (R2) threshold from 0 to 1.  If the fit is weaker, the edge will not be considered in the analysis.
 
                     direction_condition: boolean, default: False
                          If True, DysRegNet will only consider case samples with positive residuals (target gene overexpressed) for models with a negative TF coefficient
-                         as potentially dysregulated. Similarly, for positive TF coefficients, only case samples with negative residuals are considered.
+                         as potentially dysregulated. Similarly, for positive TF coefficients, only case samples with negative residuals are considered. Please check the paper for more details.
                     """
 
 
