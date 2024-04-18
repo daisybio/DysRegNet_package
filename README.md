@@ -111,4 +111,4 @@ Link for the demo dataset: https://figshare.com/ndownloader/files/35142652
 
 ## Cite
 "DysRegNet: Patient-specific and confounder-aware dysregulated network inference"
-Johannes Kersting*, Olga Lazareva*, Zakaria Louadi*, David B. Blumenthal, Jan Baumbach, Markus List. bioRxiv 2022.04.29.490015; doi: https://doi.org/10.1101/2022.04.29.490015. * equal first-authors
+Johannes Kersting*, Olga Lazareva*, Zakaria Louadi*, Jan Baumbach, David B. Blumenthal, Markus List. bioRxiv 2022.04.29.490015; doi: https://doi.org/10.1101/2022.04.29.490015. * equal first-authors
