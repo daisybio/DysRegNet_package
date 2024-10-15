@@ -74,7 +74,7 @@ Run DysRegNet
 data=dysregnet.run(expression_data=expr,
                    meta=meta, 
                    GRN=grn,
-                   conCol=conCol
+                   conCol=conCol,
                    CatCov=CatCov,
                    ConCov=ConCov,
                    direction_condition=True,
