@@ -110,5 +110,4 @@ You will need to download the demo dataset and extract the files into test datas
 Link for the demo dataset: https://figshare.com/ndownloader/files/35142652
 
 ## Cite
-"DysRegNet: Patient-specific and confounder-aware dysregulated network inference"
-Johannes Kersting*, Olga Lazareva*, Zakaria Louadi*, Jan Baumbach, David B. Blumenthal, Markus List. bioRxiv 2022.04.29.490015; doi: https://doi.org/10.1101/2022.04.29.490015. * equal first-authors
+Kersting, J., Lazareva, O., Louadi, Z., Baumbach, J., Blumenthal, D. B., & List, M. (2024). DysRegNet: Patient-specific and confounder-aware dysregulated network inference towards precision therapeutics. British Journal of Pharmacology, 1–16. https://doi.org/10.1111/bph.17395
